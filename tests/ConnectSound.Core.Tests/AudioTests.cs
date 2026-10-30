@@ -97,6 +97,34 @@ public class MixerTests
     }
 
     [Fact]
+    public void Call_on_the_host_itself_silences_every_device_and_recovers()
+    {
+        var mixer = new Mixer { LocalCall = true };
+        var music = new MixerChannel("music");
+        var work = new MixerChannel("work") { Profile = SourceProfile.Calls };
+        mixer.Add(music);
+        mixer.Add(work);
+
+        var output = new float[AudioFormat.FrameSamples];
+        void Run(int frames)
+        {
+            for (var i = 0; i < frames; i++)
+            {
+                Feed(music, 0.3f, frames: 1);
+                Feed(work, 0.2f, frames: 1);
+                mixer.Read(output);
+            }
+        }
+
+        Run(100);
+        Assert.Equal(0f, output[0], 3);
+
+        mixer.LocalCall = false;
+        Run(100);
+        Assert.Equal(0.5f, output[0], 3);
+    }
+
+    [Fact]
     public void Muted_channel_is_metered_but_silent()
     {
         var mixer = new Mixer();

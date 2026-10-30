@@ -33,6 +33,11 @@ muzyka z pozostałych urządzeń sama się przycisza i wraca po rozłączeniu.
 Komputer nie jest wymagany. Nadrzędnym może być telefon podłączony do głośnika:
 wtedy pozostałe telefony łączą się z nim przez wspólne Wi-Fi albo przez jego hotspot.
 
+**Telefon służbowy jako nadrzędny** to dobry układ do jazdy autem albo pracy przy głośniku Bluetooth:
+służbowy telefon jest połączony z głośnikiem lub samochodem, a pozostałe urządzenia wysyłają do niego swój dźwięk.
+Rozmowy odbierasz normalnie, przyciskiem na głośniku lub w aucie, i idą one przez ten sam zestaw.
+Na czas rozmowy ConnectSound całkowicie wycisza dźwięk z pozostałych urządzeń.
+
 <p align="center">
   <img src="docs/screenshots/phone-host.png" width="300" alt="Telefon jako urządzenie nadrzędne" />
   &nbsp;&nbsp;

@@ -20,7 +20,7 @@ public sealed partial class HostViewModel : PageViewModel
     [ObservableProperty] private double _masterGain;
     [ObservableProperty] private double _masterLevel;
     [ObservableProperty] private bool _callActive;
-    [ObservableProperty] private string? _callerName;
+    [ObservableProperty] private string? _callText;
     [ObservableProperty] private string? _error;
     [ObservableProperty] private string? _outputProblem;
 
@@ -41,6 +41,14 @@ public sealed partial class HostViewModel : PageViewModel
         catch (SocketException)
         {
             Error = "Nie mogę otworzyć portów 47801–47802. Zamknij drugą kopię ConnectSound albo zezwól aplikacji w zaporze sieciowej.";
+        }
+
+        // When this device is the work phone, its own calls must silence everything else too.
+        if (services.Platform.CallMonitor is { } calls)
+        {
+            calls.InCallChanged += OnOwnCallChanged;
+            calls.Start();
+            OnOwnCallChanged(calls.InCall);
         }
 
         _meters = new DispatcherTimer(TimeSpan.FromMilliseconds(33), DispatcherPriority.Render, (_, _) => Tick());
@@ -91,6 +99,11 @@ public sealed partial class HostViewModel : PageViewModel
         UpdateBackgroundNote();
     }
 
+    private void OnOwnCallChanged(bool inCall)
+    {
+        if (_session is not null) _session.Mixer.LocalCall = inCall;
+    }
+
     private void Tick()
     {
         if (_session is null) return;
@@ -99,8 +112,10 @@ public sealed partial class HostViewModel : PageViewModel
         OutputProblem = _output?.Problem;
 
         var caller = Channels.FirstOrDefault(c => c.InCall && !c.Muted);
-        CallActive = caller is not null;
-        CallerName = caller?.Name;
+        CallActive = _session.Mixer.LocalCall || caller is not null;
+        CallText = _session.Mixer.LocalCall
+            ? "Trwa rozmowa na tym telefonie. Dźwięk z pozostałych urządzeń jest wyciszony."
+            : caller is not null ? $"{caller.Name} prowadzi rozmowę. Muzyka jest przyciszona." : null;
     }
 
     private void UpdateBackgroundNote() =>
@@ -136,6 +151,11 @@ public sealed partial class HostViewModel : PageViewModel
     public override async ValueTask DisposeAsync()
     {
         _meters.Stop();
+        if (_services.Platform.CallMonitor is { } calls)
+        {
+            calls.InCallChanged -= OnOwnCallChanged;
+            calls.Stop();
+        }
         _services.Platform.SetBackgroundActivity(null);
         if (_session is not null) await _session.DisposeAsync();
     }

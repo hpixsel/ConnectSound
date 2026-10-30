@@ -15,11 +15,11 @@
 
     <!-- On-air bar while a call is in progress -->
     <Border DockPanel.Dock="Top" Background="{StaticResource OnAir}" Padding="20,10" IsVisible="{Binding CallActive}">
-      <StackPanel Orientation="Horizontal" Spacing="10">
-        <Ellipse Width="10" Height="10" Fill="White" VerticalAlignment="Center" />
-        <TextBlock Foreground="White" FontWeight="SemiBold" TextWrapping="Wrap"
-                   Text="{Binding CallerName, StringFormat='{}{0} prowadzi rozmowę. Muzyka jest przyciszona.'}" />
-      </StackPanel>
+      <Grid ColumnDefinitions="Auto,*">
+        <Ellipse Width="10" Height="10" Fill="White" VerticalAlignment="Top" Margin="0,6,10,0" />
+        <TextBlock Grid.Column="1" Foreground="White" FontWeight="SemiBold" TextWrapping="Wrap"
+                   Text="{Binding CallText}" />
+      </Grid>
     </Border>
 
     <Border DockPanel.Dock="Top" Background="#26D93A2B" Padding="20,10" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}">

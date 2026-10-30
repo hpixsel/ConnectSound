@@ -49,11 +49,17 @@ public sealed class HostSession : IAsyncDisposable
     private UdpClient? _audio;
     private HostAnnouncer? _announcer;
 
-    public HostSession(DeviceIdentity identity, IAudioOutput output)
+    /// <param name="controlPort">Pass 0 to let the OS pick (tests); real hosts use the well-known ports so sources can find them.</param>
+    public HostSession(DeviceIdentity identity, IAudioOutput output, int controlPort = Ports.Control, int audioPort = Ports.Audio)
     {
         _identity = identity;
         _output = output;
+        ControlPort = controlPort;
+        AudioPort = audioPort;
     }
+
+    public int ControlPort { get; private set; }
+    public int AudioPort { get; private set; }
 
     public Mixer Mixer { get; } = new();
 
@@ -64,10 +70,12 @@ public sealed class HostSession : IAsyncDisposable
 
     public void Start()
     {
-        _listener = new TcpListener(IPAddress.Any, Ports.Control);
+        _listener = new TcpListener(IPAddress.Any, ControlPort);
         _listener.Start();
+        ControlPort = ((IPEndPoint)_listener.LocalEndpoint).Port;
 
-        _audio = new UdpClient(new IPEndPoint(IPAddress.Any, Ports.Audio));
+        _audio = new UdpClient(new IPEndPoint(IPAddress.Any, AudioPort));
+        AudioPort = ((IPEndPoint)_audio.Client.LocalEndPoint!).Port;
         _audio.Client.ReceiveBufferSize = 1 << 20;
 
         _loops.Add(Task.Run(() => AcceptAsync(_listener, _cts.Token)));
@@ -75,7 +83,7 @@ public sealed class HostSession : IAsyncDisposable
 
         _output.Start(Mixer);
 
-        _announcer = new HostAnnouncer(_identity, Ports.Control);
+        _announcer = new HostAnnouncer(_identity, ControlPort);
         _announcer.Start();
     }
 
@@ -139,7 +147,7 @@ public sealed class HostSession : IAsyncDisposable
                 Name = _identity.Name,
                 Kind = _identity.Kind,
                 Token = source.Token,
-                AudioPort = Ports.Audio,
+                AudioPort = AudioPort,
             }, hostCt).ConfigureAwait(false);
 
             using var linked = CancellationTokenSource.CreateLinkedTokenSource(hostCt, source.Cancel.Token);

@@ -82,11 +82,11 @@ public class LoopbackSessionTests
     [Fact]
     public async Task Source_streams_into_host_and_reports_calls()
     {
-        await using var host = new HostSession(new DeviceIdentity("host", "Laptop", DeviceKind.Computer), new NullOutput());
+        await using var host = new HostSession(new DeviceIdentity("host", "Laptop", DeviceKind.Computer), new NullOutput(), controlPort: 0, audioPort: 0);
         host.Start();
 
         await using var source = new SourceClient(new DeviceIdentity("phone", "Pixel", DeviceKind.Phone), new ToneCapture());
-        await source.ConnectAsync(new IPEndPoint(IPAddress.Loopback, Ports.Control), SourceProfile.Calls, inCall: false, CancellationToken.None);
+        await source.ConnectAsync(new IPEndPoint(IPAddress.Loopback, host.ControlPort), SourceProfile.Calls, inCall: false, CancellationToken.None);
 
         Assert.Equal("Laptop", source.HostName);
         var remote = await Eventually(() => host.Sources.SingleOrDefault());

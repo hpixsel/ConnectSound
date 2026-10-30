@@ -49,6 +49,12 @@ public sealed class Mixer : ISampleProvider48k
     private int _mixOffset = AudioFormat.FrameSamples;
 
     public volatile float MasterGain = 1f;
+
+    /// <summary>
+    /// The host itself is on a call (e.g. the work phone is the host). Every remote device fades out
+    /// completely so nothing plays over the call, and comes back when it ends.
+    /// </summary>
+    public volatile bool LocalCall;
     public LevelMeter MasterMeter { get; } = new();
 
     public bool CallActive { get; private set; }
@@ -101,7 +107,7 @@ public sealed class Mixer : ISampleProvider48k
             channel.Meter.Feed(_scratch);
             if (channel.Muted) continue;
 
-            var duckTarget = callActive && channel.Profile == SourceProfile.Media ? DuckLevel : 1f;
+            var duckTarget = LocalCall ? 0f : callActive && channel.Profile == SourceProfile.Media ? DuckLevel : 1f;
             var gain = channel.Gain * channel.NextDuck(duckTarget);
             for (var i = 0; i < _mix.Length; i++) _mix[i] += _scratch[i] * gain;
         }

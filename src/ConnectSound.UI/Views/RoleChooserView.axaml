@@ -23,7 +23,7 @@
             <Button DockPanel.Dock="Bottom" Classes="primary" Content="Graj tutaj" Command="{Binding BeHostCommand}"
                     HorizontalAlignment="Left" Margin="0,18,0,0" />            <StackPanel Spacing="8">
               <TextBlock Classes="heading" Text="Nadrzędne" />
-              <TextBlock Classes="body" Text="Odtwarza dźwięk ze wszystkich połączonych urządzeń przez swoje głośniki lub słuchawki. Tu ustawiasz głośność każdego telefonu." />
+              <TextBlock Classes="body" Text="Odtwarza dźwięk ze wszystkich połączonych urządzeń przez swoje głośniki lub słuchawki. Tu ustawiasz głośność każdego telefonu. Gdy to telefon i ktoś na niego zadzwoni, reszta ucichnie na czas rozmowy." />
             </StackPanel>
           </DockPanel>
         </Border>
@@ -32,7 +32,7 @@
             <Button DockPanel.Dock="Bottom" Classes="primary" Content="Wysyłaj dźwięk" Command="{Binding BeSourceCommand}"
                     HorizontalAlignment="Left" Margin="0,18,0,0" />            <StackPanel Spacing="8">
               <TextBlock Classes="heading" Text="Źródło" />
-              <TextBlock Classes="body" Text="Przekazuje wszystko, co gra na tym urządzeniu, do urządzenia nadrzędnego. Telefon do rozmów ustaw jako źródło z profilem „Rozmowy”." />
+              <TextBlock Classes="body" Text="Przekazuje wszystko, co gra na tym urządzeniu, do urządzenia nadrzędnego. Telefon do rozmów ustaw jako źródło z profilem „Rozmowy” albo zrób z niego nadrzędne." />
             </StackPanel>
           </DockPanel>
         </Border>
