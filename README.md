@@ -83,6 +83,9 @@ Pod spodem:
 - **Android:** przechwytuje dźwięk aplikacji przez `AudioPlaybackCapture`, gra przez `AudioTrack`.
   Usługa pierwszoplanowa trzyma transmisję przy wygaszonym ekranie.
 
+Na Windowsie zamknięcie okna chowa ConnectSound do zasobnika obok zegara, a dźwięk płynie dalej.
+Aplikację zamykasz z menu jej ikony: „Zamknij ConnectSound”. Ponowne uruchomienie przywraca okno, które już działa.
+
 Zapora Windows przy pierwszym uruchomieniu zapyta o dostęp do sieci prywatnej. Zezwól, inaczej telefony nie znajdą komputera.
 
 ## Rozmowy telefoniczne

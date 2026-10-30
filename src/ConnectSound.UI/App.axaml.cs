@@ -26,9 +26,8 @@ public partial class App : Application
         switch (ApplicationLifetime)
         {
             case IClassicDesktopStyleApplicationLifetime desktop:
-                desktop.MainWindow = new MainWindow { DataContext = vm };
-                desktop.MainWindow.Opened += (_, _) => Started?.Invoke(desktop.MainWindow, vm);
-                desktop.ShutdownRequested += (_, _) => _ = vm.ShutdownAsync();
+                var window = DesktopShell.Attach(desktop, vm);
+                window.Opened += (_, _) => Started?.Invoke(window, vm);
                 break;
             case ISingleViewApplicationLifetime single:
                 single.MainView = new MainView { DataContext = vm };

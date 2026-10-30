@@ -75,7 +75,7 @@ internal sealed record DemoOptions(bool Enabled, string? DataDirectory, AppRole?
                 using var bitmap = new RenderTargetBitmap(pixels, new Vector(96 * scale, 96 * scale));
                 bitmap.Render(top);
                 bitmap.Save(path);
-                (top as Window)?.Close();
+                ConnectSound.UI.DesktopShell.Exit();
             }, TimeSpan.FromSeconds(4));
         }
 

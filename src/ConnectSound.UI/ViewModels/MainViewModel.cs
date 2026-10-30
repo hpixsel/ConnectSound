@@ -46,6 +46,15 @@ public sealed partial class MainViewModel : ObservableObject
 
     public bool IsChoosingRole => Page is RoleChooserViewModel;
 
+    /// <summary>One line for the tray menu and tooltip.</summary>
+    public string StatusText => Page switch
+    {
+        HostViewModel host => host.Summary,
+        SourceViewModel { IsStreaming: true } source => $"Wysyłam dźwięk do: {source.HostName}",
+        SourceViewModel => "Nie wysyłam dźwięku",
+        _ => "Wybierz, co ma robić to urządzenie",
+    };
+
     public string RoleLabel => Page switch
     {
         HostViewModel => "Nadrzędne",
