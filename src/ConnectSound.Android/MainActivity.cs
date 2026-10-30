@@ -29,6 +29,12 @@ public sealed class MainActivity : AvaloniaMainActivity<App>
         base.OnCreate(savedInstanceState);
     }
 
+    protected override void OnResume()
+    {
+        base.OnResume();
+        App.Resumed();
+    }
+
     protected override void OnActivityResult(int requestCode, Result resultCode, Intent? data)
     {
         base.OnActivityResult(requestCode, resultCode, data);

@@ -189,3 +189,48 @@ internal sealed class WasapiOutput : IAudioOutput, IMMNotificationClient
         }
     }
 }
+
+/// <summary>Starts the preferred capture and switches to the fallback if the OS can't provide it.</summary>
+internal sealed class FallbackCapture(IAudioCapture preferred, IAudioCapture fallback) : IAudioCapture
+{
+    private IAudioCapture? _active;
+
+    public event SamplesHandler? SamplesCaptured;
+
+    public void Start()
+    {
+        try
+        {
+            Use(preferred);
+        }
+        catch (AudioDeviceException)
+        {
+            Use(fallback);
+        }
+    }
+
+    private void Use(IAudioCapture capture)
+    {
+        capture.SamplesCaptured += Forward;
+        try { capture.Start(); }
+        catch { capture.SamplesCaptured -= Forward; throw; }
+        _active = capture;
+    }
+
+    private void Forward(ReadOnlySpan<float> samples) => SamplesCaptured?.Invoke(samples);
+
+    public void Stop()
+    {
+        if (_active is null) return;
+        _active.SamplesCaptured -= Forward;
+        _active.Stop();
+        _active = null;
+    }
+
+    public void Dispose()
+    {
+        Stop();
+        preferred.Dispose();
+        fallback.Dispose();
+    }
+}

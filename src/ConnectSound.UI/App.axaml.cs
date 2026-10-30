@@ -15,6 +15,11 @@ public partial class App : Application
     /// <summary>Optional hook for the platform head, called once the main window or view exists.</summary>
     public static Action<Avalonia.Controls.TopLevel, MainViewModel>? Started { get; set; }
 
+    private static MainViewModel? _main;
+
+    /// <summary>The platform head calls this when the app comes back to the foreground.</summary>
+    public static void Resumed() => _main?.Update.CheckSoon();
+
     public const string DefaultFont = "avares://ConnectSound.UI/Assets/Fonts#Barlow";
 
     public override void Initialize() => AvaloniaXamlLoader.Load(this);
@@ -22,6 +27,7 @@ public partial class App : Application
     public override void OnFrameworkInitializationCompleted()
     {
         var vm = new MainViewModel(Platform);
+        _main = vm;
 
         switch (ApplicationLifetime)
         {

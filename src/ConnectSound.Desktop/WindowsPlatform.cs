@@ -20,7 +20,9 @@ internal sealed class WindowsPlatform(string? dataDirectory = null, bool silent 
     public string AppVersion { get; } =
         typeof(WindowsPlatform).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion.Split('+')[0] ?? "0.0.0";
 
-    public Task<IAudioCapture?> CreateCaptureAsync() => Task.FromResult<IAudioCapture?>(new LoopbackCapture());
+    // Per-app capture ignores the speakers' mute, so the PC can stay silent locally; older Windows falls back to endpoint loopback.
+    public Task<IAudioCapture?> CreateCaptureAsync() =>
+        Task.FromResult<IAudioCapture?>(new FallbackCapture(new ProcessLoopbackCapture(), new LoopbackCapture()));
 
     public IAudioOutput CreateOutput() => silent ? new DemoOptions.SilentOutput() : new WasapiOutput();
 

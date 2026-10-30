@@ -37,6 +37,8 @@
           </DockPanel>
         </Border>
       </UniformGrid>
+
+      <TextBlock Classes="small" Text="{Binding VersionLabel}" />
     </StackPanel>
   </ScrollViewer>
 </UserControl>

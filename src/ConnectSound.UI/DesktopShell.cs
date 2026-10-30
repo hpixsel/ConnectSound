@@ -29,6 +29,7 @@ public sealed class DesktopShell
         _vm = vm;
         _window = new MainWindow { DataContext = vm };
         _window.Closing += OnClosing;
+        _window.Activated += (_, _) => vm.Update.CheckSoon();
 
         desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         desktop.MainWindow = _window;
@@ -42,7 +43,7 @@ public sealed class DesktopShell
         _tray = new TrayIcon
         {
             Icon = new WindowIcon(AssetLoader.Open(new Uri("avares://ConnectSound.UI/Assets/icon.ico"))),
-            Menu = [_status, new NativeMenuItemSeparator(), show, quit],
+            Menu = [_status, new NativeMenuItem(vm.Update.VersionLabel) { IsEnabled = false }, new NativeMenuItemSeparator(), show, quit],
             IsVisible = true,
         };
         _tray.Clicked += (_, _) => Show();

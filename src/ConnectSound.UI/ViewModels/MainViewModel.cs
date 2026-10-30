@@ -104,6 +104,8 @@ public sealed partial class RoleChooserViewModel : PageViewModel
 
     public bool IsPhone => _services.Platform.Kind == DeviceKind.Phone;
 
+    public string VersionLabel => $"Wersja {_services.Platform.AppVersion}";
+
     partial void OnDeviceNameChanged(string value)
     {
         _services.Settings.DeviceName = string.IsNullOrWhiteSpace(value) ? null : value.Trim();

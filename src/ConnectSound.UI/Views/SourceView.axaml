@@ -93,6 +93,7 @@
 
       <TextBlock Classes="small" TextWrapping="Wrap" Text="{Binding CaptureNote}"
                  IsVisible="{Binding CaptureNote, Converter={x:Static ObjectConverters.IsNotNull}}" />
+      <TextBlock Classes="small" Text="{Binding VersionLabel}" />
     </StackPanel>
   </ScrollViewer>
 </UserControl>

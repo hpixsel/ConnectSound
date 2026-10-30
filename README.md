@@ -53,7 +53,7 @@ Na czas rozmowy ConnectSound całkowicie wycisza dźwięk z pozostałych urządz
 | Windows | `ConnectSound-win-Setup.exe` z [wydań](https://github.com/hpixsel/ConnectSound/releases/latest) | Windows 10 lub 11, x64 |
 | Android | `ConnectSound-<wersja>.apk` z [wydań](https://github.com/hpixsel/ConnectSound/releases/latest) | Android 10 lub nowszy |
 
-**Aktualizacje są automatyczne.** Po starcie aplikacja sprawdza najnowsze wydanie na GitHubie
+**Aktualizacje są automatyczne.** Aplikacja sprawdza najnowsze wydanie na GitHubie po starcie, co kilka godzin i przy każdym powrocie do niej,
 i pokazuje pasek „Wersja X jest gotowa”. Na Windowsie aktualizacja pobiera się w tle (tylko różnice)
 i aplikacja uruchamia się ponownie. Na Androidzie pobiera się nowy APK i otwiera systemowy instalator.
 Za pierwszym razem Android poprosi o zgodę na instalowanie aplikacji z ConnectSound.
@@ -84,7 +84,9 @@ Pod spodem:
 - **Sterowanie:** źródło łączy się przez TCP 47801 i przedstawia się (nazwa, profil, stan rozmowy).
 - **Dźwięk:** ramki Opus po 20 ms, 48 kHz stereo, przez UDP 47802. Gubione pakiety są ukrywane
   przez kodek, a bufor każdego kanału trzyma 60 ms i pilnuje, żeby opóźnienie nie rosło z czasem.
-- **Windows:** przechwytuje wszystko, co gra komputer (WASAPI loopback), i odtwarza przez WASAPI.
+- **Windows:** przechwytuje dźwięk wszystkich aplikacji oprócz samego ConnectSound (WASAPI process loopback),
+  zanim system zastosuje głośność i wyciszenie. Głośniki komputera możesz więc wyciszyć, żeby nie grało podwójnie,
+  a dźwięk dalej trafia do urządzenia nadrzędnego. Na Windows starszym niż 10 (2004) działa zwykły loopback.
 - **Android:** przechwytuje dźwięk aplikacji przez `AudioPlaybackCapture`, gra przez `AudioTrack`.
   Usługa pierwszoplanowa trzyma transmisję przy wygaszonym ekranie.
 

@@ -58,6 +58,8 @@ public sealed partial class HostViewModel : PageViewModel
 
     public ObservableCollection<ChannelViewModel> Channels { get; } = [];
 
+    public string VersionLabel => $"Wersja {_services.Platform.AppVersion}";
+
     public bool IsEmpty => Channels.Count == 0;
 
     /// <summary>Settable so demo screenshots don't publish the real machine's addresses.</summary>

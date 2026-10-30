@@ -10,6 +10,7 @@
       <WrapPanel>
         <TextBlock Classes="small" Text="{Binding Summary}" Margin="0,0,24,0" FontWeight="Medium" Foreground="{StaticResource Ink}" />
         <TextBlock Classes="small" Text="{Binding Addresses, StringFormat='Adres tego urządzenia: {0}'}" />
+        <TextBlock Classes="small" Text="{Binding VersionLabel}" Margin="24,0,0,0" />
       </WrapPanel>
     </Border>
 

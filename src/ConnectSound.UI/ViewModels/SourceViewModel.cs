@@ -53,6 +53,8 @@ public sealed partial class SourceViewModel : PageViewModel
 
     public ObservableCollection<DiscoveredHost> Hosts { get; } = [];
 
+    public string VersionLabel => $"Wersja {_services.Platform.AppVersion}";
+
     public bool HasHosts => Hosts.Count > 0;
     public bool IsSearching => State == SourceState.Searching;
     public bool IsConnecting => State == SourceState.Connecting;
