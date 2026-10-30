@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <Version Condition="'$(Version)' == ''">0.1.0</Version>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>hpixsel</Authors>
+    <Product>ConnectSound</Product>
+    <RepositoryUrl>https://github.com/hpixsel/ConnectSound</RepositoryUrl>
+    <AvaloniaVersion>11.3.22</AvaloniaVersion>
+  </PropertyGroup>
+</Project>

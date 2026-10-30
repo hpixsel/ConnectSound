@@ -1,0 +1,185 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Styles.Resources>
+    <!-- Palette: brushed aluminium console, ink silkscreen, LED signal colours. -->
+    <Color x:Key="AluminiumColor">#D9DCE0</Color>
+    <Color x:Key="FaceColor">#ECEEF1</Color>
+    <Color x:Key="GrooveColor">#BAC0C8</Color>
+    <Color x:Key="InkColor">#1A1F29</Color>
+    <Color x:Key="InkSoftColor">#565F6E</Color>
+    <Color x:Key="SignalColor">#F0A202</Color>
+    <Color x:Key="OnAirColor">#D93A2B</Color>
+
+    <SolidColorBrush x:Key="Aluminium" Color="{StaticResource AluminiumColor}" />
+    <SolidColorBrush x:Key="Face" Color="{StaticResource FaceColor}" />
+    <SolidColorBrush x:Key="Groove" Color="{StaticResource GrooveColor}" />
+    <SolidColorBrush x:Key="Ink" Color="{StaticResource InkColor}" />
+    <SolidColorBrush x:Key="InkSoft" Color="{StaticResource InkSoftColor}" />
+    <SolidColorBrush x:Key="Signal" Color="{StaticResource SignalColor}" />
+    <SolidColorBrush x:Key="OnAir" Color="{StaticResource OnAirColor}" />
+
+    <LinearGradientBrush x:Key="BrushedMetal" StartPoint="0%,0%" EndPoint="0%,100%">
+      <GradientStop Offset="0" Color="#E3E6EA" />
+      <GradientStop Offset="1" Color="#D3D7DC" />
+    </LinearGradientBrush>
+
+    <FontFamily x:Key="Barlow">avares://ConnectSound.UI/Assets/Fonts#Barlow</FontFamily>
+    <FontFamily x:Key="BarlowCondensed">avares://ConnectSound.UI/Assets/Fonts#Barlow Semi Condensed</FontFamily>
+
+    <!-- Fluent overrides so stock controls pick up the console colours. -->
+    <SolidColorBrush x:Key="SystemControlHighlightAccentBrush" Color="{StaticResource InkColor}" />
+    <Color x:Key="SystemAccentColor">#1A1F29</Color>
+  </Styles.Resources>
+
+  <Style Selector="TopLevel, UserControl">
+    <Setter Property="FontFamily" Value="{StaticResource Barlow}" />
+    <Setter Property="Foreground" Value="{StaticResource Ink}" />
+  </Style>
+
+  <Style Selector="TextBlock">
+    <Setter Property="FontSize" Value="15" />
+  </Style>
+
+  <Style Selector="TextBlock.title">
+    <Setter Property="FontSize" Value="30" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="LetterSpacing" Value="-0.3" />
+  </Style>
+  <Style Selector="TextBlock.heading">
+    <Setter Property="FontSize" Value="20" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+  </Style>
+  <Style Selector="TextBlock.body">
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="LineHeight" Value="22" />
+    <Setter Property="TextWrapping" Value="Wrap" />
+    <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+  </Style>
+  <Style Selector="TextBlock.small">
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+  </Style>
+  <!-- Silkscreen-style labels printed on a channel strip. -->
+  <Style Selector="TextBlock.silk">
+    <Setter Property="FontFamily" Value="{StaticResource BarlowCondensed}" />
+    <Setter Property="FontWeight" Value="Medium" />
+    <Setter Property="FontSize" Value="13" />
+    <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+  </Style>
+  <Style Selector="TextBlock.readout">
+    <Setter Property="FontFamily" Value="{StaticResource BarlowCondensed}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="FontFeatures" Value="+tnum" />
+  </Style>
+
+  <!-- A panel screwed into the console. -->
+  <Style Selector="Border.panel">
+    <Setter Property="Background" Value="{StaticResource Face}" />
+    <Setter Property="BorderBrush" Value="{StaticResource Groove}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="10" />
+    <Setter Property="BoxShadow" Value="0 1 0 0 #FFFFFFFF, inset 0 1 0 0 #FFFFFFFF" />
+  </Style>
+  <Style Selector="Border.well">
+    <Setter Property="Background" Value="#14000000" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="6" />
+  </Style>
+
+  <!-- Buttons: a dark ink key for the main action, flat silkscreen buttons otherwise. -->
+  <Style Selector="Button">
+    <Setter Property="FontFamily" Value="{StaticResource Barlow}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="CornerRadius" Value="6" />
+    <Setter Property="Padding" Value="16,9" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="Button.primary">
+    <Setter Property="Background" Value="{StaticResource Ink}" />
+    <Setter Property="Foreground" Value="#F4F5F7" />
+  </Style>
+  <Style Selector="Button.primary:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#2C3443" />
+    <Setter Property="Foreground" Value="#FFFFFF" />
+  </Style>
+  <Style Selector="Button.primary:pressed /template/ ContentPresenter">
+    <Setter Property="Background" Value="#0F131A" />
+  </Style>
+  <Style Selector="Button.quiet">
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+    <Setter Property="Padding" Value="10,6" />
+    <Setter Property="FontWeight" Value="Medium" />
+  </Style>
+  <Style Selector="Button.quiet:pointerover /template/ ContentPresenter">
+    <Setter Property="Background" Value="#14000000" />
+    <Setter Property="Foreground" Value="{StaticResource Ink}" />
+  </Style>
+
+  <!-- Mute key: lights up red when engaged, like a backlit console button. -->
+  <Style Selector="ToggleButton.key">
+    <Setter Property="FontFamily" Value="{StaticResource BarlowCondensed}" />
+    <Setter Property="FontWeight" Value="SemiBold" />
+    <Setter Property="FontSize" Value="14" />
+    <Setter Property="HorizontalAlignment" Value="Stretch" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Background" Value="#E0E3E7" />
+    <Setter Property="BorderBrush" Value="{StaticResource Groove}" />
+    <Setter Property="BorderThickness" Value="1" />
+    <Setter Property="CornerRadius" Value="5" />
+    <Setter Property="Padding" Value="8,7" />
+    <Setter Property="Cursor" Value="Hand" />
+  </Style>
+  <Style Selector="ToggleButton.key:checked /template/ ContentPresenter">
+    <Setter Property="Background" Value="{StaticResource OnAir}" />
+    <Setter Property="Foreground" Value="#FFFFFF" />
+    <Setter Property="BorderBrush" Value="#B32C20" />
+  </Style>
+
+  <!-- Segmented selector (profile). -->
+  <Style Selector="RadioButton.segment">
+    <Setter Property="Template">
+      <ControlTemplate>
+        <Border Name="seg" Background="Transparent" CornerRadius="5" Padding="14,8">
+          <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center"
+                            Foreground="{TemplateBinding Foreground}" FontWeight="SemiBold" />
+        </Border>
+      </ControlTemplate>
+    </Setter>
+    <Setter Property="Cursor" Value="Hand" />
+    <Setter Property="Foreground" Value="{StaticResource InkSoft}" />
+  </Style>
+  <Style Selector="RadioButton.segment:checked /template/ Border#seg">
+    <Setter Property="Background" Value="{StaticResource Ink}" />
+  </Style>
+  <Style Selector="RadioButton.segment:checked">
+    <Setter Property="Foreground" Value="#F4F5F7" />
+  </Style>
+  <Style Selector="RadioButton.segment:focus-visible /template/ Border#seg">
+    <Setter Property="BorderBrush" Value="{StaticResource Signal}" />
+    <Setter Property="BorderThickness" Value="2" />
+  </Style>
+
+  <Style Selector="TextBox">
+    <Setter Property="FontFamily" Value="{StaticResource Barlow}" />
+    <Setter Property="FontSize" Value="15" />
+    <Setter Property="CornerRadius" Value="6" />
+  </Style>
+
+  <!-- On-air lamp. -->
+  <Style Selector="Ellipse.lamp">
+    <Setter Property="Width" Value="10" />
+    <Setter Property="Height" Value="10" />
+    <Setter Property="Fill" Value="#33000000" />
+  </Style>
+  <Style Selector="Ellipse.lamp.on">
+    <Setter Property="Fill" Value="{StaticResource OnAir}" />
+  </Style>
+
+  <Style Selector="ProgressBar">
+    <Setter Property="Foreground" Value="{StaticResource Signal}" />
+  </Style>
+</Styles>

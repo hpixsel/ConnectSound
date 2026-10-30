@@ -1,0 +1,11 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:v="using:ConnectSound.UI.Views"
+        x:Class="ConnectSound.UI.Views.MainWindow"
+        Title="ConnectSound"
+        Icon="avares://ConnectSound.UI/Assets/icon.ico"
+        Width="1080" Height="680" MinWidth="380" MinHeight="520"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource Aluminium}">
+  <v:MainView />
+</Window>

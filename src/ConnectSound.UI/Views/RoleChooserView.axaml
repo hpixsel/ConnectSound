@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ConnectSound.UI.ViewModels"
+             xmlns:c="using:ConnectSound.UI.Controls"
+             x:Class="ConnectSound.UI.Views.RoleChooserView"
+             x:DataType="vm:RoleChooserViewModel">
+  <ScrollViewer>
+    <StackPanel MaxWidth="820" Margin="20,32,20,24" Spacing="26">
+      <StackPanel Spacing="8">
+        <TextBlock Classes="title" Text="Co ma robić to urządzenie?" TextWrapping="Wrap" />
+        <TextBlock Classes="body" MaxWidth="560" HorizontalAlignment="Left"
+                   Text="Jedno urządzenie gra, pozostałe wysyłają mu swój dźwięk przez Wi-Fi. Wszystkie muszą być w tej samej sieci albo na hotspocie jednego z telefonów." />
+      </StackPanel>
+
+      <StackPanel Spacing="6">
+        <TextBlock Classes="silk" Text="Nazwa widoczna dla innych" />
+        <TextBox Text="{Binding DeviceName}" MaxWidth="360" HorizontalAlignment="Left" MinWidth="240" />
+      </StackPanel>
+
+      <UniformGrid x:Name="Choices" Columns="2">
+        <Border Classes="panel" Padding="22" Margin="0,0,8,12">
+          <DockPanel>
+            <Button DockPanel.Dock="Bottom" Classes="primary" Content="Graj tutaj" Command="{Binding BeHostCommand}"
+                    HorizontalAlignment="Left" Margin="0,18,0,0" />            <StackPanel Spacing="8">
+              <TextBlock Classes="heading" Text="Nadrzędne" />
+              <TextBlock Classes="body" Text="Odtwarza dźwięk ze wszystkich połączonych urządzeń przez swoje głośniki lub słuchawki. Tu ustawiasz głośność każdego telefonu." />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+        <Border Classes="panel" Padding="22" Margin="8,0,0,12">
+          <DockPanel>
+            <Button DockPanel.Dock="Bottom" Classes="primary" Content="Wysyłaj dźwięk" Command="{Binding BeSourceCommand}"
+                    HorizontalAlignment="Left" Margin="0,18,0,0" />            <StackPanel Spacing="8">
+              <TextBlock Classes="heading" Text="Źródło" />
+              <TextBlock Classes="body" Text="Przekazuje wszystko, co gra na tym urządzeniu, do urządzenia nadrzędnego. Telefon do rozmów ustaw jako źródło z profilem „Rozmowy”." />
+            </StackPanel>
+          </DockPanel>
+        </Border>
+      </UniformGrid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

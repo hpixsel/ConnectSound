@@ -1,0 +1,50 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ConnectSound.UI.ViewModels"
+             xmlns:v="using:ConnectSound.UI.Views"
+             x:Class="ConnectSound.UI.Views.MainView"
+             x:DataType="vm:MainViewModel"
+             Background="{StaticResource BrushedMetal}">
+  <DockPanel>
+    <!-- Top rail -->
+    <Border DockPanel.Dock="Top" Padding="20,14,14,14" BorderBrush="{StaticResource Groove}" BorderThickness="0,0,0,1">
+      <Grid ColumnDefinitions="Auto,*,Auto">
+        <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <v:Logo Width="26" Height="26" />
+          <TextBlock Text="ConnectSound" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" LetterSpacing="-0.2" />
+        </StackPanel>
+        <Grid Grid.Column="1" ColumnDefinitions="Auto,*" Margin="18,0,12,0" VerticalAlignment="Center"
+                    IsVisible="{Binding !IsChoosingRole}">
+          <Border Background="{StaticResource Ink}" CornerRadius="4" Padding="7,2" VerticalAlignment="Center" Margin="0,0,8,0">
+            <TextBlock Text="{Binding RoleLabel}" Foreground="#F4F5F7" Classes="silk" />
+          </Border>
+          <TextBlock Grid.Column="1" Text="{Binding DeviceName}" Classes="small" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+        </Grid>
+        <Button Grid.Column="2" Classes="quiet" Content="Zmień rolę" Command="{Binding ChangeRoleCommand}"
+                IsVisible="{Binding !IsChoosingRole}" />
+      </Grid>
+    </Border>
+
+    <!-- Update strip -->
+    <Border DockPanel.Dock="Top" Background="{StaticResource Ink}" Padding="20,10" IsVisible="{Binding Update.IsAvailable}">
+      <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto,Auto">
+        <TextBlock Text="{Binding Update.Text}" Foreground="#F4F5F7" VerticalAlignment="Center" FontWeight="Medium" TextWrapping="Wrap" />
+        <Button Grid.Column="1" Content="Zainstaluj teraz" Command="{Binding Update.InstallCommand}"
+                Background="{StaticResource Signal}" Foreground="{StaticResource Ink}" Padding="14,6" Margin="12,0,0,0"
+                IsEnabled="{Binding !Update.IsInstalling}" />
+        <Button Grid.Column="2" Content="Później" Command="{Binding Update.DismissCommand}" Classes="quiet"
+                Foreground="#B9C0CC" Margin="4,0,0,0" IsVisible="{Binding !Update.IsInstalling}" />
+        <ProgressBar Grid.Row="1" Grid.ColumnSpan="3" Margin="0,8,0,0" Minimum="0" Maximum="1"
+                     Value="{Binding Update.Progress}" IsVisible="{Binding Update.IsInstalling}" />
+      </Grid>
+    </Border>
+
+    <ContentControl Content="{Binding Page}">
+      <ContentControl.DataTemplates>
+        <DataTemplate DataType="vm:RoleChooserViewModel"><v:RoleChooserView /></DataTemplate>
+        <DataTemplate DataType="vm:HostViewModel"><v:HostView /></DataTemplate>
+        <DataTemplate DataType="vm:SourceViewModel"><v:SourceView /></DataTemplate>
+      </ContentControl.DataTemplates>
+    </ContentControl>
+  </DockPanel>
+</UserControl>

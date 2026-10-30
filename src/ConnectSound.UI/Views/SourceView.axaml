@@ -1,0 +1,98 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ConnectSound.UI.ViewModels"
+             xmlns:net="using:ConnectSound.Core.Net"
+             xmlns:c="using:ConnectSound.UI.Controls"
+             x:Class="ConnectSound.UI.Views.SourceView"
+             x:DataType="vm:SourceViewModel">
+  <ScrollViewer>
+    <StackPanel MaxWidth="640" Margin="20,28,20,28" Spacing="22" HorizontalAlignment="Stretch">
+
+      <!-- Streaming -->
+      <Border Classes="panel" Padding="22,20" IsVisible="{Binding IsStreaming}">
+        <StackPanel Spacing="14">
+          <StackPanel Spacing="2">
+            <TextBlock Classes="silk" Text="Wysyłasz dźwięk do" />
+            <TextBlock Classes="title" Text="{Binding HostName}" TextTrimming="CharacterEllipsis" />
+          </StackPanel>
+          <Border Classes="well" Padding="8">
+            <c:LevelMeter Orientation="Horizontal" Height="14" Level="{Binding Level}" Segments="40" />
+          </Border>
+          <StackPanel Orientation="Horizontal" Spacing="8" IsVisible="{Binding CanMonitorCalls}">
+            <Ellipse Classes="lamp" Classes.on="{Binding InCall}" VerticalAlignment="Center" />
+            <TextBlock Classes="small" Text="{Binding InCall, Converter={x:Static vm:Labels.CallLamp}}" />
+          </StackPanel>
+          <Button Classes="primary" Content="Rozłącz" Command="{Binding DisconnectCommand}" HorizontalAlignment="Left" />
+        </StackPanel>
+      </Border>
+
+      <!-- Looking for a host -->
+      <StackPanel Spacing="8" IsVisible="{Binding !IsStreaming}">
+        <TextBlock Classes="title" Text="Dokąd wysłać dźwięk?" TextWrapping="Wrap" />
+        <TextBlock Classes="body" Text="Urządzenia nadrzędne w tej sieci pojawią się poniżej same. Stuknij jedno, żeby zacząć." />
+      </StackPanel>
+
+      <Border Background="#26D93A2B" CornerRadius="8" Padding="14,10" IsVisible="{Binding Message, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <TextBlock Text="{Binding Message}" TextWrapping="Wrap" FontWeight="Medium" />
+      </Border>
+
+      <StackPanel Spacing="8" IsVisible="{Binding !IsStreaming}">
+        <ItemsControl ItemsSource="{Binding Hosts}" IsEnabled="{Binding IsSearching}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate><StackPanel Spacing="8" /></ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="net:DiscoveredHost">
+              <Border Classes="panel" Padding="16,12">
+                <Grid ColumnDefinitions="*,Auto">
+                  <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Name}" FontWeight="SemiBold" FontSize="17" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="small" Text="{Binding Control.Address}" />
+                  </StackPanel>
+                  <Button Grid.Column="1" Classes="primary" Content="Połącz"
+                          Command="{Binding $parent[ItemsControl].((vm:SourceViewModel)DataContext).ConnectCommand}"
+                          CommandParameter="{Binding}" />
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsSearching}" Margin="2,4,0,0">
+          <ProgressBar IsIndeterminate="True" Width="40" Height="3" MinWidth="40" VerticalAlignment="Center" />
+          <TextBlock Classes="small" Text="Szukam urządzeń nadrzędnych…" IsVisible="{Binding !HasHosts}" />
+          <TextBlock Classes="small" Text="Szukam dalej" IsVisible="{Binding HasHosts}" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="10" IsVisible="{Binding IsConnecting}" Margin="2,4,0,0">
+          <ProgressBar IsIndeterminate="True" Width="40" Height="3" MinWidth="40" VerticalAlignment="Center" />
+          <TextBlock Classes="small" Text="Łączę…" />
+        </StackPanel>
+      </StackPanel>
+
+      <!-- Profile -->
+      <StackPanel Spacing="8">
+        <TextBlock Classes="heading" Text="Do czego służy ten telefon" />
+        <Border Classes="panel" Padding="4" HorizontalAlignment="Left" CornerRadius="8">
+          <StackPanel Orientation="Horizontal" Spacing="4">
+            <RadioButton Classes="segment" GroupName="profile" Content="Muzyka" IsChecked="{Binding IsMediaProfile}" />
+            <RadioButton Classes="segment" GroupName="profile" Content="Rozmowy" IsChecked="{Binding IsCallsProfile}" />
+          </StackPanel>
+        </Border>
+        <TextBlock Classes="body" Text="{Binding ProfileHint}" />
+      </StackPanel>
+
+      <!-- Manual address -->
+      <StackPanel Spacing="8" IsVisible="{Binding IsSearching}">
+        <TextBlock Classes="heading" Text="Połącz po adresie" />
+        <TextBlock Classes="body" Text="Gdy sieć blokuje wyszukiwanie (np. Wi-Fi w biurze), wpisz adres z dolnego paska urządzenia nadrzędnego." />
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBox Text="{Binding ManualAddress}" Watermark="192.168.1.20" Margin="0,0,8,0" />
+          <Button Grid.Column="1" Classes="primary" Content="Połącz" Command="{Binding ConnectManualCommand}" />
+        </Grid>
+      </StackPanel>
+
+      <TextBlock Classes="small" TextWrapping="Wrap" Text="{Binding CaptureNote}"
+                 IsVisible="{Binding CaptureNote, Converter={x:Static ObjectConverters.IsNotNull}}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

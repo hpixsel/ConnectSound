@@ -1,0 +1,73 @@
+name: Release
+
+# Push a tag like v0.2.0 to publish: Windows installer + delta updates (Velopack) and a signed APK.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - name: Version from tag
+        shell: bash
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+      - run: dotnet publish src/ConnectSound.Desktop -c Release -r win-x64 --self-contained -p:Version=${{ env.VERSION }} -o publish
+      - run: dotnet tool install -g vpk --version 1.2.161
+      - name: Fetch previous release (for delta updates)
+        run: vpk download github --repoUrl ${{ github.server_url }}/${{ github.repository }} --token ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+      - name: Pack
+        run: >
+          vpk pack --packId ConnectSound --packVersion ${{ env.VERSION }} --packDir publish
+          --mainExe ConnectSound.exe --packTitle ConnectSound --packAuthors hpixsel
+          --icon src/ConnectSound.UI/Assets/icon.ico
+      - name: Publish GitHub release
+        run: >
+          vpk upload github --repoUrl ${{ github.server_url }}/${{ github.repository }}
+          --token ${{ secrets.GITHUB_TOKEN }} --publish --tag ${{ github.ref_name }}
+          --releaseName "ConnectSound ${{ env.VERSION }}"
+
+  android:
+    name: Android APK
+    needs: windows
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: dotnet workload install android
+      - name: Version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+      - name: Restore signing key
+        run: echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release.keystore"
+      - name: Build signed APK
+        run: >
+          dotnet publish src/ConnectSound.Android -c Release -p:Version=${{ env.VERSION }}
+          -p:AndroidKeyStore=true
+          -p:AndroidSigningKeyStore="$RUNNER_TEMP/release.keystore"
+          -p:AndroidSigningKeyAlias=${{ secrets.ANDROID_KEY_ALIAS }}
+          -p:AndroidSigningStorePass=env:ANDROID_KEYSTORE_PASSWORD
+          -p:AndroidSigningKeyPass=env:ANDROID_KEYSTORE_PASSWORD
+          -o out
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      - name: Attach APK to the release
+        run: |
+          cp out/*-Signed.apk "ConnectSound-${VERSION}.apk"
+          gh release upload "$GITHUB_REF_NAME" "ConnectSound-${VERSION}.apk" --clobber
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

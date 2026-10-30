@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/ConnectSound.Android/ConnectSound.Android.csproj" />
+    <Project Path="src/ConnectSound.Core/ConnectSound.Core.csproj" />
+    <Project Path="src/ConnectSound.Desktop/ConnectSound.Desktop.csproj" />
+    <Project Path="src/ConnectSound.UI/ConnectSound.UI.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/ConnectSound.Core.Tests/ConnectSound.Core.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,147 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:ConnectSound.UI.ViewModels"
+             xmlns:c="using:ConnectSound.UI.Controls"
+             x:Class="ConnectSound.UI.Views.HostView"
+             x:DataType="vm:HostViewModel">
+  <DockPanel>
+    <!-- Status rail -->
+    <Border DockPanel.Dock="Bottom" Padding="20,10" BorderBrush="{StaticResource Groove}" BorderThickness="0,1,0,0">
+      <WrapPanel>
+        <TextBlock Classes="small" Text="{Binding Summary}" Margin="0,0,24,0" FontWeight="Medium" Foreground="{StaticResource Ink}" />
+        <TextBlock Classes="small" Text="{Binding Addresses, StringFormat='Adres tego urządzenia: {0}'}" />
+      </WrapPanel>
+    </Border>
+
+    <!-- On-air bar while a call is in progress -->
+    <Border DockPanel.Dock="Top" Background="{StaticResource OnAir}" Padding="20,10" IsVisible="{Binding CallActive}">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <Ellipse Width="10" Height="10" Fill="White" VerticalAlignment="Center" />
+        <TextBlock Foreground="White" FontWeight="SemiBold" TextWrapping="Wrap"
+                   Text="{Binding CallerName, StringFormat='{}{0} prowadzi rozmowę. Muzyka jest przyciszona.'}" />
+      </StackPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Top" Background="#26D93A2B" Padding="20,10" IsVisible="{Binding Error, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <TextBlock Text="{Binding Error}" TextWrapping="Wrap" FontWeight="Medium" />
+    </Border>
+
+    <Border DockPanel.Dock="Top" Background="#26F0A202" Padding="20,10" IsVisible="{Binding OutputProblem, Converter={x:Static ObjectConverters.IsNotNull}}">
+      <TextBlock Text="{Binding OutputProblem}" TextWrapping="Wrap" FontWeight="Medium" />
+    </Border>
+
+    <Panel>
+      <!-- Wide: console with vertical strips and a master section on the right -->
+      <Grid x:Name="Wide" ColumnDefinitions="*,Auto" Margin="20,18,20,18">
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled">
+          <Panel>
+            <ItemsControl ItemsSource="{Binding Channels}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><StackPanel Orientation="Horizontal" Spacing="12" /></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate DataType="vm:ChannelViewModel">
+                  <Border Classes="panel" Width="136" Padding="12,14">
+                    <DockPanel>
+                      <StackPanel DockPanel.Dock="Top" Spacing="1">
+                        <TextBlock Text="{Binding Name}" FontFamily="{StaticResource BarlowCondensed}" FontWeight="SemiBold" FontSize="17"
+                                   TextWrapping="Wrap" MaxLines="2" TextTrimming="CharacterEllipsis" ToolTip.Tip="{Binding Address}" />
+                        <TextBlock Classes="silk" Text="{Binding ProfileLabel}" />
+                      </StackPanel>
+                      <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Spacing="6" Margin="0,8,0,8">
+                        <Ellipse Classes="lamp" Classes.on="{Binding InCall}" VerticalAlignment="Center" />
+                        <TextBlock Classes="silk" Text="{Binding InCall, Converter={x:Static vm:Labels.CallLamp}}" />
+                      </StackPanel>
+                      <StackPanel DockPanel.Dock="Bottom" Spacing="6">
+                        <TextBlock Classes="readout" Text="{Binding GainText}" HorizontalAlignment="Center" />
+                        <ToggleButton Classes="key" Content="Wycisz" IsChecked="{Binding Muted}" />
+                        <Button Classes="quiet" Content="Odłącz" Command="{Binding DisconnectCommand}" HorizontalAlignment="Center" FontSize="13" />
+                      </StackPanel>
+                      <Border Classes="well" Margin="0,0,0,10">
+                        <Grid ColumnDefinitions="Auto,*">
+                          <c:LevelMeter Width="8" Level="{Binding Level}" Segments="28" Margin="2,22" />
+                          <c:Fader Grid.Column="1" Value="{Binding Gain}" MinHeight="200" />
+                        </Grid>
+                      </Border>
+                    </DockPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <StackPanel IsVisible="{Binding IsEmpty}" MaxWidth="440" HorizontalAlignment="Left" VerticalAlignment="Center" Spacing="10" Margin="8,0,0,0">
+              <TextBlock Classes="title" Text="Podłącz pierwszy telefon" TextWrapping="Wrap" />
+              <TextBlock Classes="body" Text="Otwórz ConnectSound na telefonie, wybierz „Źródło” i stuknij nazwę tego urządzenia. Każdy podłączony telefon dostanie tu własny kanał z głośnością." />
+              <TextBlock Classes="body" Text="Telefon nie widzi tego urządzenia? Wpisz na nim adres z dolnego paska." />
+            </StackPanel>
+          </Panel>
+        </ScrollViewer>
+
+        <!-- Master section -->
+        <Border Grid.Column="1" Classes="panel" Width="120" Padding="12,14" Margin="18,0,0,0" Background="#E4E7EB">
+          <DockPanel>
+            <StackPanel DockPanel.Dock="Top" Spacing="1" Margin="0,0,0,12">
+              <TextBlock Text="Wyjście" FontFamily="{StaticResource BarlowCondensed}" FontWeight="SemiBold" FontSize="17" />
+              <TextBlock Classes="silk" Text="Wszystko razem" />
+            </StackPanel>
+            <TextBlock DockPanel.Dock="Bottom" Classes="readout" Text="{Binding MasterGainText}" HorizontalAlignment="Center" Margin="0,8,0,0" />
+            <Border Classes="well">
+              <Grid ColumnDefinitions="Auto,Auto,*">
+                <c:LevelMeter Width="8" Level="{Binding MasterLevel}" Segments="28" Margin="2,22" />
+                <c:LevelMeter Grid.Column="1" Width="8" Level="{Binding MasterLevel}" Segments="28" Margin="3,22,0,22" />
+                <c:Fader Grid.Column="2" Value="{Binding MasterGain}" MinHeight="200" />
+              </Grid>
+            </Border>
+          </DockPanel>
+        </Border>
+      </Grid>
+
+      <!-- Compact: one row per device, master on top -->
+      <ScrollViewer x:Name="Compact" IsVisible="False">
+        <StackPanel Margin="14,14,14,20" Spacing="10">
+          <Border Classes="panel" Padding="14,12" Background="#E4E7EB">
+            <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto">
+              <TextBlock Text="Wyjście" FontFamily="{StaticResource BarlowCondensed}" FontWeight="SemiBold" FontSize="17" />
+              <TextBlock Grid.Column="1" Classes="readout" Text="{Binding MasterGainText}" />
+              <c:LevelMeter Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Height="6" Level="{Binding MasterLevel}" Segments="32" Margin="0,8,0,0" />
+              <c:Fader Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Value="{Binding MasterGain}" Margin="0,4,0,0" />
+            </Grid>
+          </Border>
+
+          <StackPanel IsVisible="{Binding IsEmpty}" Spacing="8" Margin="4,12,4,0">
+            <TextBlock Classes="heading" Text="Podłącz pierwszy telefon" />
+            <TextBlock Classes="body" Text="Na drugim telefonie otwórz ConnectSound, wybierz „Źródło” i stuknij nazwę tego urządzenia." />
+          </StackPanel>
+
+          <ItemsControl ItemsSource="{Binding Channels}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate><StackPanel Spacing="10" /></ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate DataType="vm:ChannelViewModel">
+                <Border Classes="panel" Padding="14,12">
+                  <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto">
+                    <StackPanel Spacing="1">
+                      <StackPanel Orientation="Horizontal" Spacing="8">
+                        <Ellipse Classes="lamp on" VerticalAlignment="Center" IsVisible="{Binding InCall}" />
+                        <TextBlock Text="{Binding Name}" FontFamily="{StaticResource BarlowCondensed}" FontWeight="SemiBold" FontSize="17" TextTrimming="CharacterEllipsis" />
+                      </StackPanel>
+                      <TextBlock Classes="silk" Text="{Binding ProfileLabel}" />
+                    </StackPanel>
+                    <ToggleButton Grid.Column="1" Classes="key" Content="Wycisz" IsChecked="{Binding Muted}" VerticalAlignment="Top" Width="84" />
+                    <c:LevelMeter Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" Height="6" Level="{Binding Level}" Segments="32" Margin="0,10,0,0" />
+                    <c:Fader Grid.Row="2" Grid.ColumnSpan="2" Orientation="Horizontal" Value="{Binding Gain}" Margin="0,4,0,0" />
+                    <Grid Grid.Row="3" Grid.ColumnSpan="2" ColumnDefinitions="*,Auto">
+                      <TextBlock Classes="readout" Text="{Binding GainText}" VerticalAlignment="Center" />
+                      <Button Grid.Column="1" Classes="quiet" Content="Odłącz" Command="{Binding DisconnectCommand}" FontSize="13" />
+                    </Grid>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </ScrollViewer>
+    </Panel>
+  </DockPanel>
+</UserControl>
